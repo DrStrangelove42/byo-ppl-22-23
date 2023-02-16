@@ -1,8 +1,11 @@
 open Rppl
 
-let node coin (prob, x) = 0. (* TODO *)
+let node coin (prob, x) = z where (* TODO *)
+  rec init z = sample (prob, uniform 0. 1.)
+  and () = observe (prob, bernoulli z, x)
+
 
 let node main () = () where
-  rec obs = draw (bernoulli 0.3)
-  and d = infer_importance 1000 coin obs
+  rec obs = draw (bernoulli 0.65)
+  and d = infer_pf 1000 coin obs
   and () = print_int obs; print_string " "; print_float (mean d); print_newline ()
