@@ -77,4 +77,6 @@ module Hashtbl = struct
 
   (** Returns an array containing the values. *)
   let to_array_values hist = hist |> Hashtbl.to_seq_values |> Array.of_seq
+
+  let to_list hist = hist |> Hashtbl.to_seq |> List.of_seq
 end

@@ -84,3 +84,16 @@ val gaussian : mu:float -> sigma:float -> float t
 
 val uniform : a:float -> b:float -> float t
 (** {{: https://en.wikipedia.org/wiki/Continuous_uniform_distribution}Uniform distribution} on the segment [[a, b]]. *)
+
+val exponential : lambda:float -> float t
+(** {https://en.wikipedia.org/wiki/Exponential_distribution} *)
+
+val poisson : lambda:float -> int t
+(** {{: https://en.wikipedia.org/wiki/Poisson_binomial_distribution} *)
+
+val gamma : shape:float -> scale:float -> float t
+(** {https://en.wikipedia.org/wiki/Gamma_distribution} *)
+
+val laplace : loc:float -> scale:float -> float t
+(** {https://en.wikipedia.org/wiki/Laplace_distribution} *)
+

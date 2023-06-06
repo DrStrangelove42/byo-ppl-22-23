@@ -39,3 +39,14 @@ The `Rppl` library contains the reactive extension of BYO-PPL (for Zelus).
 - `rppl.ml` (TODO): Library for reactive probabilistic programming with Zelus
 - `rppl.zli`: Signature file for the Zelus compiler
 - `hmm.zls`, `coin.zls` (TODO): Simple examples of reactive probabilistic models.
+
+## Work done
+- Implemented the enumeration sampling with continuation c to optimizing the sampling to avoid duplication values.
+
+- Added more examples of distributions.
+
+- Tested the enu_sampling on several examples.
+
+- As expected, this sampling does not work with rec , also Knuth-Yao , showing error of stack overflow, because of the infinite trace of rec program.
+
+- Enu_sampling is limited when the number of variables to be exponential. while reject_sampling is limited when the number of assumptions to be exponential, it might not terminate, while importance_sampling terminates.

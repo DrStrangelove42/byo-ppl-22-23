@@ -1,3 +1,3 @@
 (executables
- (names funny_bernoulli coin laplace hmm knuth_yao true_skills)
- (libraries byoppl))
+ (names funny_bernoulli coin laplace hmm knuth_yao true_skills enu)
+ (libraries byoppl owl-plplot))

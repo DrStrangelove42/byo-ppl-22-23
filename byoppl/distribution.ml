@@ -80,14 +80,29 @@ let binomial ~p ~n =
   assert (n >= 0 && 0. <= p && p <= 1.);
   let sample () = Owl_stats.binomial_rvs ~p ~n in
   let logpdf x = Owl_stats.binomial_logpdf x ~p ~n in
+  let prob x = Owl_stats.binomial_pdf x ~p ~n in
   let mean () = Float.of_int n *. p in
   let var () = Float.of_int n *. p *. (1. -. p) in
-  make ~sample ~logpdf ~mean ~var ()
+  let support =
+    {
+      values = Array.init (n + 1) (fun i -> i);
+      logits = Array.init (n + 1) logpdf;
+      probs  = Array.init (n + 1) prob
+    }
+  in
+  make ~sample ~logpdf ~support ~mean ~var ()
 
 let dirac ~v =
   let sample () : 'a = v in
   let logpdf x = if x = v then 0. else -.infinity in
-  make ~sample ~logpdf ()
+  let support =
+    {
+      values = [| v |];
+      logits = [| 0. |];
+      probs  = [| 1. |];
+    }
+  in
+  make ~sample ~logpdf ~support ()
 
 let support ~values ~logits =
   assert (Array.length values = Array.length logits);
@@ -154,3 +169,71 @@ let uniform ~a ~b =
   let mean () = a +. (b /. 2.) in
   let var () = 1. /. 12. *. ((b -. a) ** 2.) in
   make ~sample ~logpdf ~mean ~var ()
+(*below are the distributions added*)
+
+let exponential ~lambda =
+  let sample () = Owl_stats.exponential_rvs ~lambda in
+  let logpdf x = Owl_stats.exponential_logpdf x ~lambda in
+  let mean () = 1. /. lambda in
+  let var () = 1. /. (lambda ** 2.) in
+  make ~sample ~logpdf ~mean ~var ()
+
+
+
+let poisson ~lambda =
+  let pi = 4. *. atan 1. in
+  let two_pi = 2.0 *. pi in
+  let sqrt_two_pi = sqrt two_pi in
+  let gamma =
+    let g = 7. in
+    let c =
+      [|
+        0.99999999999980993;676.5203681218851;-1259.1392167224028;
+        771.32342877765313;-176.61502916214059;12.507343278686905;
+        -0.13857109526572012;9.9843695780195716e-6;1.5056327351493116e-7;
+      |]
+    in
+    let rec ag z d =
+      if d = 0 then c.(0) +. ag z 1
+      else if d < 8 then (c.(d) /. (z +. float d)) +. ag z (succ d)
+      else c.(d) /. (z +. float d)
+    in
+    fun z ->
+      let z = z -. 1. in
+      let p = z +. g +. 0.5 in
+      sqrt_two_pi *. (p ** (z +. 0.5)) *. exp (-.p) *. ag z 0
+  in
+  let sample () =
+    let rec aux t k =
+      let t = t +. (exponential ~lambda).sample () in
+      if t > 1. then k else aux t (k + 1)
+    in
+    aux 0. 0
+  in
+  let logpdf x =
+    if x < 0 then neg_infinity
+    else
+      (float_of_int x *. log lambda)
+      -. lambda
+      -. log (gamma (float_of_int (x + 1)))
+  in
+  let mean () = lambda in
+  let var () = lambda in
+  make ~sample ~logpdf ~mean ~var ()
+
+
+let gamma ~shape ~scale =
+  let sample () = Owl_stats.gamma_rvs ~shape ~scale in
+  let logpdf x = Owl_stats.gamma_logpdf x ~shape ~scale in
+  let mean () = shape *. scale in
+  let var () = (shape *. scale) ** 2. in
+  make ~sample ~logpdf ~mean ~var ()
+
+let laplace ~loc ~scale =
+  let sample () = Owl_stats.laplace_rvs ~loc ~scale in
+  let logpdf x = Owl_stats.laplace_logpdf x ~loc ~scale in
+  let mean () = loc in
+  let var () = 2. *. (scale ** 2.) in
+  make ~sample ~logpdf ~mean ~var ()
+
+  
