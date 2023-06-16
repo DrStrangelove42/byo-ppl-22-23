@@ -125,14 +125,23 @@ let _ =
   test_dist "Funny Bernoulli" funny_bernoulli ()
 
 
-let sum_dice_odd () =
+let sum_dice_one_odd () =
   let* d1 = sample (uniform_support ~values:(Array.init 6 (fun i -> i))) in
   let* d2 = sample (uniform_support ~values:(Array.init 6 (fun i -> i))) in
   let* () = assume (d1 mod 2 = 1 || d2 mod 2 = 1) in
   return (d1 + d2)
 
 let _ =
-  test_dist "Sum dice odd" sum_dice_odd ()
+  test_dist "Sum dice one odd" sum_dice_one_odd ()
+
+let sum_dice_all_odd () =
+  let* d1 = sample (uniform_support ~values:(Array.init 6 (fun i -> i))) in
+  let* d2 = sample (uniform_support ~values:(Array.init 6 (fun i -> i))) in
+  let* () = assume (d1 mod 2 = 1 && d2 mod 2 = 1) in
+  return (d1 + d2)
+
+let _ =
+  test_dist "Sum dice all odd" sum_dice_all_odd ()
 
 let dice () =
   let rec gen x =
