@@ -30,6 +30,7 @@ module Importance_sampling = struct
     let values = Array.mapi (fun i _ -> model { id=i; scores } data) scores in
     Distribution.support ~values ~logits:scores
 end
+(*aknowledgement : The sampling function is from the one of Charles'*)
 
 module Enumeration = struct
 

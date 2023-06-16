@@ -5,7 +5,7 @@ open Basic.Enumeration
 open Owl_plplot
 open Owl
 
-
+(*aknowledgement : The plotting and testing are from the ones of Charles'*)
 (*setting up testing enviroment*)
 let test_bias str model data =
   Format.printf "@.-- %s, CPS Enumeration --@." str;
@@ -163,6 +163,5 @@ let _ =
   let { values; probs; _ } = get_support ~shrink:true dist in
   Array.iteri (fun i x -> Format.printf "%d %d %f@." i x probs.(i)) values
 
-  (*aknowledgement : Many thanks for Charles for helping me out of this project, telling me some technical details of Ocaml e.g. what plotting method I should use.*)
 
 
